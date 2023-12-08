@@ -1,0 +1,44 @@
+#Python script using the requests library to search and filter Anki decks by tags:
+import requests
+
+ANKI_CONNECT_URL = "http://127.0.0.1:8765"
+
+def invoke_anki_connect(action, **params):
+    payload = {
+        "action": action,
+        "version": 6,
+        **params
+    }
+    response = requests.post(ANKI_CONNECT_URL, json=payload)
+    return response.json()
+
+def search_and_filter_by_tags(tags):
+    # Search for notes based on tags
+    search_query = f"tag:{tags}"
+    search_result = invoke_anki_connect("findNotes", query=search_query)
+
+    if not search_result:
+        print("No notes found.")
+        return
+
+    # Get card details for each note
+    cards = []
+    for note_id in search_result:
+        card_ids = invoke_anki_connect("notesInfo", notes=[note_id])[0]['cards']
+        cards.extend(card_ids)
+
+    # Get details for each card
+    card_details = invoke_anki_connect("cardsInfo", cards=cards)
+
+    # Display filtered cards
+    for card in card_details:
+        print("Note ID:", card["nid"])
+        print("Card ID:", card["cid"])
+        print("Front:", card["fields"]["Front"])
+        print("Back:", card["fields"]["Back"])
+        print("---")
+
+if __name__ == "__main__":
+    # Replace 'your_tags_here' with the tags you want to filter
+    search_tags = "your_tags_here"
+    search_and_filter_by_tags(search_tags)

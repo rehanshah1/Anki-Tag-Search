@@ -2,7 +2,7 @@
 The Python script utilizes the AnkiConnect API to interact with the Anki application. AnkiConnect is a remote API that enables communication with Anki through HTTP requests.
 Constants:
 
-ANKI_CONNECT_URL: The URL for AnkiConnect, typically set to "http://127.0.0.1:8765", assuming Anki is running locally.
+1ANKI_CONNECT_URL: The URL for AnkiConnect, typically set to "http://127.0.0.1:8765", assuming Anki is running locally.
 Function: invoke_anki_connect
 
 Parameters: action (AnkiConnect action), **params (additional parameters for the specified action).

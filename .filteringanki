@@ -1,0 +1,39 @@
+#Filters through a deck on anki and lists out all the tags
+
+import requests
+
+ANKI_CONNECT_URL = "http://127.0.0.1:8765"
+
+def invoke_anki_connect(action, **params):
+    payload = {
+        "action": action,
+        "version": 6,
+        **params
+    }
+    response = requests.post(ANKI_CONNECT_URL, json=payload)
+    return response.json()
+
+def list_tags_in_deck(deck_name):
+    # Get all notes in the deck
+    notes = invoke_anki_connect("findNotes", query=f"deck:{deck_name}")
+
+    if not notes:
+        print("No notes found in the deck.")
+        return
+
+    # Get tags for each note
+    all_tags = set()
+    for note_id in notes:
+        note_tags = invoke_anki_connect("notesInfo", notes=[note_id])[0]["tags"]
+        note_tags = [tag.strip() for tag in note_tags.split()]
+        all_tags.update(note_tags)
+
+    # Display the list of tags
+    print("Tags in the deck:")
+    for tag in all_tags:
+        print(tag)
+
+if __name__ == "__main__":
+    # Replace 'Your_Deck_Name' with the actual deck name
+    deck_name = "Your_Deck_Name"
+    list_tags_in_deck(deck_name)
